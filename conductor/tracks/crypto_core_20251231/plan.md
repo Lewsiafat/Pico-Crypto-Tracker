@@ -2,7 +2,7 @@
 
 ## Phase 1: 基礎硬體與網路環境設定
 - [x] Task: 初始化 Pico Display Pack 2.8 並顯示啟動畫面 (Splash Screen) 8465892
-- [ ] Task: 實作 Wi-Fi 連線公用程式，並在螢幕上顯示連線狀態圖示
+- [x] Task: 實作 Wi-Fi 連線公用程式，並在螢幕上顯示連線狀態圖示 f3f9479
 - [ ] Task: Conductor - User Manual Verification '基礎硬體與網路環境設定' (Protocol in workflow.md)
 
 ## Phase 2: API 整合與價格顯示
