@@ -88,7 +88,7 @@ if __name__ == "__main__":
                 display.update()
             
             # 每 60 秒更新一次
-            time.sleep(60)
+            time.sleep(15)
     else:
         draw_splash("Wi-Fi Failed!")
         time.sleep(5)

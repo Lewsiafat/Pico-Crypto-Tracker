@@ -1,4 +1,17 @@
 {
+    "micropico.syncFolder": "src",           // 空值 = 上傳整個專案
+    "micropico.pyIgnore": [
+        "**/__pycache__/**",
+        "**/*.pyc",
+        ".vscode/**",
+        ".git/**",
+        "conductor/**",
+        "samples/**",
+        "GEMINI.md",
+        "README.md",
+        ".gitignore"
+    ],
+    "micropico.softResetAfterUpload": true,
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.diagnosticSeverityOverrides": {

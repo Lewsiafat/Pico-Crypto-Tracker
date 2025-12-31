@@ -16,6 +16,7 @@ def get_crypto_price(coin_id="bitcoin", currency="usd"):
             data = response.json()
             price = data[coin_id][currency]
             change = data[coin_id].get(f"{currency}_24h_change", 0)
+            print(f"Price: {price}")
             response.close()
             return True, price, change
         else:
