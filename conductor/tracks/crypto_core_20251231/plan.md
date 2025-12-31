@@ -1,7 +1,7 @@
 # Track Plan: 建立核心顯示與 Wi-Fi 連線功能
 
 ## Phase 1: 基礎硬體與網路環境設定
-- [ ] Task: 初始化 Pico Display Pack 2.8 並顯示啟動畫面 (Splash Screen)
+- [x] Task: 初始化 Pico Display Pack 2.8 並顯示啟動畫面 (Splash Screen) 8465892
 - [ ] Task: 實作 Wi-Fi 連線公用程式，並在螢幕上顯示連線狀態圖示
 - [ ] Task: Conductor - User Manual Verification '基礎硬體與網路環境設定' (Protocol in workflow.md)
 
