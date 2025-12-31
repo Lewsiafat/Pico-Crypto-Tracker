@@ -17,22 +17,37 @@ GOLD = display.create_pen(255, 215, 0)
 GREEN = display.create_pen(0, 255, 0)
 RED = display.create_pen(255, 0, 0)
 GREY = display.create_pen(100, 100, 100)
+DARK_GREY = display.create_pen(30, 30, 30)
 
 def draw_status_bar(is_connected):
     """繪製頂部狀態列"""
     display.set_pen(BLACK)
     display.rectangle(0, 0, WIDTH, 40)
     
-    # Wi-Fi 圖示
     color = GREEN if is_connected else RED
     display.set_pen(color)
     display.circle(WIDTH - 20, 20, 6)
     
-    # 時間或標題
     display.set_pen(GREY)
     display.text("PICO CRYPTO", 20, 12, WIDTH, 2)
 
-def draw_price_page(coin_name, price, change_24h):
+def draw_info_bar(current_interval, target_coin):
+    """繪製底部系統資訊欄"""
+    # 資訊欄背景
+    display.set_pen(DARK_GREY)
+    display.rectangle(0, HEIGHT - 30, WIDTH, 30)
+    
+    display.set_pen(GREY)
+    # 使用較小的 scale (1) 以確保不重疊
+    # 顯示更新頻率 (靠左)
+    display.text(f"FREQ: {current_interval}s", 10, HEIGHT - 22, WIDTH, 2)
+    
+    # 顯示目標幣種 (靠右)
+    coin_text = f"COIN: {target_coin.upper()}"
+    tw = display.measure_text(coin_text, 2)
+    display.text(coin_text, WIDTH - tw - 10, HEIGHT - 22, WIDTH, 2)
+
+def draw_price_page(coin_name, price, change_24h, interval):
     """繪製價格資訊頁面"""
     display.set_pen(BLACK)
     display.clear()
@@ -46,7 +61,6 @@ def draw_price_page(coin_name, price, change_24h):
     # 價格顯示
     display.set_pen(WHITE)
     price_str = f"${price:,.2f}"
-    # 根據字度調整縮放
     scale = 5 if len(price_str) < 10 else 4
     display.text(price_str, 20, 110, WIDTH, scale)
     
@@ -58,6 +72,9 @@ def draw_price_page(coin_name, price, change_24h):
     display.set_pen(change_color)
     prefix = "+" if change_24h >= 0 else ""
     display.text(f"{prefix}{change_24h:.2f}%", 160, 180, WIDTH, 2)
+    
+    # 繪製底部資訊欄
+    draw_info_bar(interval, coin_name)
     
     display.update()
 
@@ -73,22 +90,14 @@ def draw_splash(message):
     display.update()
 
 if __name__ == "__main__":
-    draw_splash("Connecting...")
-    success, ip = wifi_utils.connect_wifi(secrets.WIFI_SSID, secrets.WIFI_PASSWORD)
+    current_interval = 15
+    target_coin = "bitcoin"
     
-    if success:
-        while True:
-            api_success, price, change = crypto_api.get_crypto_price("bitcoin", "usd")
-            if api_success:
-                draw_price_page("Bitcoin", price, change)
-            else:
-                # 發生錯誤時顯示提示
-                display.set_pen(RED)
-                display.text("API Error, retrying...", 20, HEIGHT - 30, WIDTH, 2)
-                display.update()
-            
-            # 每 60 秒更新一次
-            time.sleep(15)
-    else:
-        draw_splash("Wi-Fi Failed!")
-        time.sleep(5)
+    draw_splash("UI Demo...")
+    time.sleep(1)
+    
+    # 模擬顯示
+    draw_price_page(target_coin, 43125.50, 2.45, current_interval)
+    
+    while True:
+        time.sleep(1)
