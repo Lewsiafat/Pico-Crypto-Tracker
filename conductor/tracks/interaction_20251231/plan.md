@@ -7,5 +7,5 @@
 
 ## Phase 2: 循環切換邏輯與動態更新
 - [x] Task: 實作 A/B 按鈕的幣種與頻率循環切換邏輯 42ef94b
-- [ ] Task: 重構主循環邏輯，使 API 請求與計時器動態適應新的設定
+- [x] Task: 重構主循環邏輯，使 API 請求與計時器動態適應新的設定 0345157
 - [ ] Task: Conductor - User Manual Verification '循環切換邏輯與動態更新' (Protocol in workflow.md)
