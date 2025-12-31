@@ -110,12 +110,15 @@ if __name__ == "__main__":
             if need_initial_fetch or time_since_update >= current_interval:
                 print(f"Updating price for {current_coin}...")
                 api_success, new_price, new_change = crypto_api.get_crypto_price(current_coin, "usd")
+                
+                # 無論成功或失敗，都更新 last_update_time 以重設倒數計時
+                last_update_time = current_time
+                need_initial_fetch = False
+                
                 if api_success:
                     price, change = new_price, new_change
-                    last_update_time = current_time
-                    need_initial_fetch = False
                 else:
-                    print("API update failed, will retry...")
+                    print("API update failed, will retry in next interval...")
             
             # 計算下次更新倒數
             next_update_in = max(0, current_interval - (current_time - last_update_time))
