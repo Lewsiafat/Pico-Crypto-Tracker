@@ -1,9 +1,9 @@
 # Track Plan: 互動式幣種與頻率切換功能
 
-## Phase 1: 基礎按鈕輸入與底欄 UI
+## Phase 1: 基礎按鈕輸入與底欄 UI [checkpoint: 637c31e]
 - [x] Task: 實作按鈕監聽邏輯與去抖動 (Debouncing) 93b5c88
 - [x] Task: 在螢幕底部設計並實作「系統資訊欄」UI 4f3dfa5
-- [ ] Task: Conductor - User Manual Verification '基礎按鈕輸入與底欄 UI' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification '基礎按鈕輸入與底欄 UI' (Protocol in workflow.md) 637c31e
 
 ## Phase 2: 循環切換邏輯與動態更新
 - [ ] Task: 實作 A/B 按鈕的幣種與頻率循環切換邏輯
