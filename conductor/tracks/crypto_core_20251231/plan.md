@@ -7,5 +7,5 @@
 
 ## Phase 2: API 整合與價格顯示
 - [x] Task: 實作 API 模組，透過 Wi-Fi 獲取 BTC 即時價格 72dbd08
-- [ ] Task: 設計並實作「現代暗黑模式」價格顯示頁面 (顯示 BTC 價格與 24h 變化)
+- [x] Task: 設計並實作「現代暗黑模式」價格顯示頁面 (顯示 BTC 價格與 24h 變化) f7f1edb
 - [ ] Task: Conductor - User Manual Verification 'API 整合與價格顯示' (Protocol in workflow.md)
