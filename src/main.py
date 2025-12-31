@@ -3,6 +3,7 @@ from picographics import PicoGraphics, DISPLAY_PICO_DISPLAY_2, PEN_RGB565
 import wifi_utils
 import secrets
 import crypto_api
+from buttons import button_a, button_b
 
 # 初始化螢幕
 display = PicoGraphics(display=DISPLAY_PICO_DISPLAY_2, pen_type=PEN_RGB565, rotate=0)
@@ -19,6 +20,10 @@ RED = display.create_pen(255, 0, 0)
 GREY = display.create_pen(100, 100, 100)
 DARK_GREY = display.create_pen(30, 30, 30)
 
+# 設定選項
+COINS = ["bitcoin", "ethereum"]
+INTERVALS = [10, 15, 30, 60]
+
 def draw_status_bar(is_connected):
     """繪製頂部狀態列"""
     display.set_pen(BLACK)
@@ -33,16 +38,12 @@ def draw_status_bar(is_connected):
 
 def draw_info_bar(current_interval, target_coin):
     """繪製底部系統資訊欄"""
-    # 資訊欄背景
     display.set_pen(DARK_GREY)
     display.rectangle(0, HEIGHT - 30, WIDTH, 30)
     
     display.set_pen(GREY)
-    # 使用較小的 scale (1) 以確保不重疊
-    # 顯示更新頻率 (靠左)
     display.text(f"FREQ: {current_interval}s", 10, HEIGHT - 22, WIDTH, 2)
     
-    # 顯示目標幣種 (靠右)
     coin_text = f"COIN: {target_coin.upper()}"
     tw = display.measure_text(coin_text, 2)
     display.text(coin_text, WIDTH - tw - 10, HEIGHT - 22, WIDTH, 2)
@@ -54,17 +55,14 @@ def draw_price_page(coin_name, price, change_24h, interval):
     
     draw_status_bar(wifi_utils.get_status())
     
-    # 幣種名稱
     display.set_pen(GOLD)
     display.text(coin_name.upper(), 20, 60, WIDTH, 4)
     
-    # 價格顯示
     display.set_pen(WHITE)
     price_str = f"${price:,.2f}"
     scale = 5 if len(price_str) < 10 else 4
     display.text(price_str, 20, 110, WIDTH, scale)
     
-    # 24h 漲跌幅
     display.set_pen(GREY)
     display.text("24h Change:", 20, 180, WIDTH, 2)
     
@@ -73,9 +71,7 @@ def draw_price_page(coin_name, price, change_24h, interval):
     prefix = "+" if change_24h >= 0 else ""
     display.text(f"{prefix}{change_24h:.2f}%", 160, 180, WIDTH, 2)
     
-    # 繪製底部資訊欄
     draw_info_bar(interval, coin_name)
-    
     display.update()
 
 def draw_splash(message):
@@ -90,14 +86,28 @@ def draw_splash(message):
     display.update()
 
 if __name__ == "__main__":
-    current_interval = 15
-    target_coin = "bitcoin"
+    coin_idx = 0
+    interval_idx = 1 # 預設 15s
     
-    draw_splash("UI Demo...")
+    draw_splash("Switch Logic Demo...")
     time.sleep(1)
     
-    # 模擬顯示
-    draw_price_page(target_coin, 43125.50, 2.45, current_interval)
+    # 初始化模擬資料
+    current_price = 43125.50
+    current_change = 2.45
     
     while True:
-        time.sleep(1)
+        # 偵測按鈕 A (切換幣種)
+        if button_a.is_pressed():
+            coin_idx = (coin_idx + 1) % len(COINS)
+            print(f"Switched to coin: {COINS[coin_idx]}")
+        
+        # 偵測按鈕 B (切換頻率)
+        if button_b.is_pressed():
+            interval_idx = (interval_idx + 1) % len(INTERVALS)
+            print(f"Switched to interval: {INTERVALS[interval_idx]}s")
+        
+        # 更新顯示 (模擬)
+        draw_price_page(COINS[coin_idx], current_price, current_change, INTERVALS[interval_idx])
+        
+        time.sleep(0.01)
