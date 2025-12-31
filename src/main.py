@@ -25,57 +25,49 @@ COINS = ["bitcoin", "ethereum"]
 INTERVALS = [10, 15, 30, 60]
 
 def draw_status_bar(is_connected):
-    """繪製頂部狀態列"""
     display.set_pen(BLACK)
     display.rectangle(0, 0, WIDTH, 40)
-    
     color = GREEN if is_connected else RED
     display.set_pen(color)
     display.circle(WIDTH - 20, 20, 6)
-    
     display.set_pen(GREY)
     display.text("PICO CRYPTO", 20, 12, WIDTH, 2)
 
-def draw_info_bar(current_interval, target_coin):
-    """繪製底部系統資訊欄"""
+def draw_info_bar(current_interval, target_coin, next_update_in=None):
     display.set_pen(DARK_GREY)
     display.rectangle(0, HEIGHT - 30, WIDTH, 30)
-    
     display.set_pen(GREY)
-    display.text(f"FREQ: {current_interval}s", 10, HEIGHT - 22, WIDTH, 2)
+    
+    # 顯示頻率與倒數 (若有)
+    freq_text = f"FREQ: {current_interval}s"
+    if next_update_in is not None:
+        freq_text += f" ({next_update_in}s)"
+    display.text(freq_text, 10, HEIGHT - 22, WIDTH, 2)
     
     coin_text = f"COIN: {target_coin.upper()}"
     tw = display.measure_text(coin_text, 2)
     display.text(coin_text, WIDTH - tw - 10, HEIGHT - 22, WIDTH, 2)
 
-def draw_price_page(coin_name, price, change_24h, interval):
-    """繪製價格資訊頁面"""
+def draw_price_page(coin_name, price, change_24h, interval, next_update_in):
     display.set_pen(BLACK)
     display.clear()
-    
     draw_status_bar(wifi_utils.get_status())
-    
     display.set_pen(GOLD)
     display.text(coin_name.upper(), 20, 60, WIDTH, 4)
-    
     display.set_pen(WHITE)
     price_str = f"${price:,.2f}"
     scale = 5 if len(price_str) < 10 else 4
     display.text(price_str, 20, 110, WIDTH, scale)
-    
     display.set_pen(GREY)
     display.text("24h Change:", 20, 180, WIDTH, 2)
-    
     change_color = GREEN if change_24h >= 0 else RED
     display.set_pen(change_color)
     prefix = "+" if change_24h >= 0 else ""
     display.text(f"{prefix}{change_24h:.2f}%", 160, 180, WIDTH, 2)
-    
-    draw_info_bar(interval, coin_name)
+    draw_info_bar(interval, coin_name, next_update_in)
     display.update()
 
 def draw_splash(message):
-    """顯示訊息畫面"""
     display.set_pen(BLACK)
     display.clear()
     display.set_pen(GOLD)
@@ -89,25 +81,51 @@ if __name__ == "__main__":
     coin_idx = 0
     interval_idx = 1 # 預設 15s
     
-    draw_splash("Switch Logic Demo...")
-    time.sleep(1)
+    draw_splash("Connecting to Wi-Fi...")
+    success, ip = wifi_utils.connect_wifi(secrets.WIFI_SSID, secrets.WIFI_PASSWORD)
     
-    # 初始化模擬資料
-    current_price = 43125.50
-    current_change = 2.45
-    
-    while True:
-        # 偵測按鈕 A (切換幣種)
-        if button_a.is_pressed():
-            coin_idx = (coin_idx + 1) % len(COINS)
-            print(f"Switched to coin: {COINS[coin_idx]}")
+    if success:
+        last_update_time = 0
+        price = 0
+        change = 0
+        need_initial_fetch = True
         
-        # 偵測按鈕 B (切換頻率)
-        if button_b.is_pressed():
-            interval_idx = (interval_idx + 1) % len(INTERVALS)
-            print(f"Switched to interval: {INTERVALS[interval_idx]}s")
-        
-        # 更新顯示 (模擬)
-        draw_price_page(COINS[coin_idx], current_price, current_change, INTERVALS[interval_idx])
-        
-        time.sleep(0.01)
+        while True:
+            current_time = time.time()
+            current_coin = COINS[coin_idx]
+            current_interval = INTERVALS[interval_idx]
+            
+            # 偵測按鈕 A (切換幣種)
+            if button_a.is_pressed():
+                coin_idx = (coin_idx + 1) % len(COINS)
+                # 切換幣種後不立即更新 API，等下一次循環
+            
+            # 偵測按鈕 B (切換頻率)
+            if button_b.is_pressed():
+                interval_idx = (interval_idx + 1) % len(INTERVALS)
+                # 頻率切換會即時影響下一次更新時間
+            
+            # 判斷是否需要更新 API
+            time_since_update = current_time - last_update_time
+            if need_initial_fetch or time_since_update >= current_interval:
+                print(f"Updating price for {current_coin}...")
+                api_success, new_price, new_change = crypto_api.get_crypto_price(current_coin, "usd")
+                if api_success:
+                    price, change = new_price, new_change
+                    last_update_time = current_time
+                    need_initial_fetch = False
+                else:
+                    print("API update failed, will retry...")
+            
+            # 計算下次更新倒數
+            next_update_in = max(0, current_interval - (current_time - last_update_time))
+            
+            # 渲染 UI (每一幀更新一次，以確保按鈕反應與倒數顯示靈敏)
+            draw_price_page(current_coin, price, change, current_interval, int(next_update_in))
+            
+            # 稍微降低 CPU 負擔
+            time.sleep(0.05)
+    else:
+        draw_splash("Wi-Fi Connection Failed")
+        while True:
+            time.sleep(1)
