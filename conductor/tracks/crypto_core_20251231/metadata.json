@@ -1,0 +1,8 @@
+{
+  "track_id": "crypto_core_20251231",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2025-12-31T10:00:00Z",
+  "updated_at": "2025-12-31T10:00:00Z",
+  "description": "建立基礎的 Wi-Fi 連線、串接 API 獲取單一幣種（如 BTC）價格，並在 Pico Display Pack 2.8 上顯示。"
+}
