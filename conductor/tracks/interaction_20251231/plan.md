@@ -2,7 +2,7 @@
 
 ## Phase 1: 基礎按鈕輸入與底欄 UI
 - [x] Task: 實作按鈕監聽邏輯與去抖動 (Debouncing) 93b5c88
-- [ ] Task: 在螢幕底部設計並實作「系統資訊欄」UI
+- [x] Task: 在螢幕底部設計並實作「系統資訊欄」UI 4f3dfa5
 - [ ] Task: Conductor - User Manual Verification '基礎按鈕輸入與底欄 UI' (Protocol in workflow.md)
 
 ## Phase 2: 循環切換邏輯與動態更新
